@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perros</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Estilos actualizados para las pestañas */
+        header {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+            transform-style: preserve-3d;
+        }
+
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: 20px;
+            position: relative;
+        }
+
+        .cart-icon {
+            position: absolute;
+            top: 0;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: var(--glass-shadow);
+            transform-style: preserve-3d;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .cart-icon:hover {
+            transform: translateY(-3px) translateZ(5px);
+        }
+
+        .cart-icon img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .cart-count {
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 5px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 15px 30px;
+            box-shadow: var(--glass-shadow);
+            color: var(--color-text);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transform-style: preserve-3d;
+            animation: logoFloat3D 6s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        .tabs-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+            width: 100%;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 8px;
+            box-shadow: var(--glass-shadow);
+            transform-style: preserve-3d;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            border-radius: 15px;
+            padding: 10px 25px;
+            margin: 0 5px;
+            color: var(--color-text);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            will-change: transform, box-shadow;
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px) translateZ(5px);
+        }
+
+        .tab-button.active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px) translateZ(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Ajustes para el contenedor principal */
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            margin-top: 180px; /* Aumentado para dar espacio al header más grande */
+            transform-style: preserve-3d;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+                padding: 12px 25px;
+            }
+            
+            .tab-button {
+                padding: 8px 15px;
+                font-size: 1rem;
+            }
+            
+            .main-container {
+                margin-top: 160px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 2rem;
+                padding: 10px 20px;
+            }
+
+            .tabs {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .tab-button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        /* Estilos para el carrito */
+        .cart-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--glass-shadow);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            transform-style: preserve-3d;
+        }
+
+        .cart-container h2 {
+            color: var(--color-text);
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .cart-items {
+            margin-bottom: 20px;
+        }
+
+        .empty-cart {
+            color: var(--color-text);
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            transform-style: preserve-3d;
+        }
+
+        .cart-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .cart-item-details {
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .cart-item-title {
+            color: var(--color-text);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: var(--color-text);
+            opacity: 0.8;
+        }
+
+        .cart-item-remove {
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .cart-item-remove:hover {
+            background: rgba(255, 0, 0, 1);
+            transform: scale(1.1);
+        }
+
+        .cart-total {
+            margin-bottom: 20px;
+        }
+
+        .cart-total p {
+            color: var(--color-text);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .checkout-btn {
+            background: rgba(0, 255, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+        }
+
+        .checkout-btn:hover {
+            background: rgba(0, 255, 0, 1);
+            transform: translateY(-3px) translateZ(5px);
+        }
+
+        .checkout-btn:disabled {
+            background: rgba(128, 128, 128, 0.5);
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas de fondo optimizadas -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Pre-cargar imágenes traseras -->
+    <div class="preload-images">
+        <img src="img/cat1.png" alt="Preload cat1">
+        <img src="img/cat2.png" alt="Preload cat2">
+        <img src="img/cat3.png" alt="Preload cat3">
+    </div>
+
+    <!-- Overlay para expansión -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Contenedor para imagen expandida nítida -->
+    <div class="expanded-image-container" id="expandedImageContainer">
+        <img src="" alt="Imagen expandida" id="expandedImage">
+        <div class="expanded-controls" id="expandedControls">
+            <div class="product-info" id="productInfo">
+                <h3 id="expandedTitle"></h3>
+                <p class="product-price" id="expandedPrice"></p>
+                <button class="add-to-cart-btn" id="expandedAddToCart">Agregar al Carrito</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Encabezado reorganizado -->
+    <header>
+        <div class="header-container">
+            <div class="logo">Mascotas</div>
+            <div class="cart-icon" id="cartIcon">
+                <img src="https://img.icons8.com/ios-filled/50/ffffff/shopping-cart.png" alt="Carrito de compras">
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="perros">Perros</button>
+                    <button class="tab-button" data-tab="gatos">Gatos</button>
+                    <button class="tab-button" data-tab="carrito">Carrito</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <div class="main-container">
+        <div class="image-gallery active" id="perros-gallery">
+            <!-- Tarjeta 1 - Cachorro -->
+            <div class="image-card" data-card-id="1">
+                <div class="light-effect"></div>
+                <div class="card-particles" id="particles-1"></div>
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="image-container">
+                            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Perro cachorro">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="image-title">Cachorros</h3>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <div class="image-container">
+                            <img src="https://png.pngtree.com/png-vector/20241119/ourmid/pngtree-delicious-bone-shaped-dog-biscuit-png-image_14457807.png" alt="Premio para cachorro">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="image-title">Cachorros</h3>
+                            <p class="product-price">$5.99</p>
+                            <button class="add-to-cart-btn" data-product-id="1">Agregar al Carrito</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 2 - Joven -->
+            <div class="image-card" data-card-id="2">
+                <div class="light-effect"></div>
+                <div class="card-particles" id="particles-2"></div>
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="image-container">
+                            <img src="https://images.unsplash.com/photo-1554456854-55a089fd4cb2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Perro joven">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="image-title">Jóvenes</h3>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <div class="image-container">
+                            <img src="https://png.pngtree.com/png-vector/20240724/ourmid/pngtree-dog-biscuits-on-transparent-background-png-image_13219662.png" alt="Galleta para perro joven">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="image-title">Jóvenes</h3>
+                            <p class="product-price">$7.99</p>
+                            <button class="add-to-cart-btn" data-product-id="2">Agregar al Carrito</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 3 - Adulto -->
+            <div class="image-card" data-card-id="3">
+                <div class="light-effect"></div>
+                <div class="card-particles" id="particles-3"></div>
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="image-container">
+                            <img src="https://resources.integricare.ca/hs-fs/hubfs/image4-Jul-25-2023-12-49-30-5188-PM.jpg?width=800&height=640&name=image4-Jul-25-2023-12-49-30-5188-PM.jpg" alt="Perro adulto">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="image-title">Adultos</h3>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <div class="image-container">
+                            <img src="https://png.pngtree.com/png-vector/20250520/ourmid/pngtree-two-crispy-dog-biscuits-shaped-like-bones-on-black-background-closeup-png-image_16330678.png" alt="Hueso para perro adulto">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="image-title">Adultos</h3>
+                            <p class="product-price">$9.99</p>
+                            <button class="add-to-cart-btn" data-product-id="3">Agregar al Carrito</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-gallery" id="gatos-gallery">
+            <!-- Tarjeta 1 - Gatito -->
+            <div class="image-card" data-card-id="4">
+                <div class="light-effect"></div>
+                <div class="card-particles" id="particles-4"></div>
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="image-container">
+                            <img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1015&q=80" alt="Gatito">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="image-title">Gatitos</h3>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <div class="image-container">
+                            <img src="img/cat1.png" alt="Premio para gatito">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="image-title">Gatitos</h3>
+                            <p class="product-price">$4.99</p>
+                            <button class="add-to-cart-btn" data-product-id="4">Agregar al Carrito</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 2 - Gato Joven -->
+            <div class="image-card" data-card-id="5">
+                <div class="light-effect"></div>
+                <div class="card-particles" id="particles-5"></div>
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="image-container">
+                            <img src="https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80" alt="Gato joven">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="image-title">Jóvenes</h3>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <div class="image-container">
+                            <img src="img/cat2.png" alt="Galleta para gato joven">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="image-title">Jóvenes</h3>
+                            <p class="product-price">$6.99</p>
+                            <button class="add-to-cart-btn" data-product-id="5">Agregar al Carrito</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 3 - Gato Adulto -->
+            <div class="image-card" data-card-id="6">
+                <div class="light-effect"></div>
+                <div class="card-particles" id="particles-6"></div>
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="image-container">
+                            <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1023&q=80" alt="Gato adulto">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="image-title">Adultos</h3>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <div class="image-container">
+                            <img src="img/cat3.png" alt="Hueso para gato adulto">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="image-title">Adultos</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="image-gallery" id="carrito-gallery">
+            <div class="cart-container">
+                <h2>Carrito de Compras</h2>
+                <div class="cart-items" id="cartItems">
+                    <p class="empty-cart">Tu carrito está vacío. ¡Agrega algunos snacks!</p>
+                </div>
+                <div class="cart-total" id="cartTotal">
+                    <p>Total: $0.00</p>
+                </div>
+                <button class="checkout-btn" id="checkoutBtn">Proceder al Pago</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer>
+        <div class="footer-content">
+            &copy; 2023 Mascotas - Amor por los perros y gatos en todas sus etapas
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
